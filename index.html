@@ -24,7 +24,7 @@ body {
   <!-- 시작 화면 -->
   <div id="startScreen" class="card rounded-3xl shadow-xl p-8 text-center">
     <h1 class="text-2xl font-bold text-purple-600 mb-4">
-      지민이의 3분학습 포켓앱
+      ♡지민이의 3분학습 포켓앱♡
     </h1>
 
     <p id="greeting" class="mb-6 text-gray-600"></p>
@@ -80,7 +80,7 @@ let current = 0;
 let score = 0;
 
 const greetings = [
-  "잘하고 있어!🎨",
+  "잘하고 있어! 🎨",
   "열공모드 ON ✨",
   "3분이면 충분해 💪",
   "지민이의 집중 타임 🌿",
@@ -91,32 +91,57 @@ document.getElementById("greeting").innerText =
   greetings[Math.floor(Math.random() * greetings.length)];
 
 function startQuiz() {
-  document.getElementById("startScreen").classList.add("hidden");
-  document.getElementById("quizScreen").classList.remove("hidden");
 
   fetch(sheetURL)
     .then(res => res.json())
     .then(data => {
+
+      if(!data || data.length === 0){
+        alert("문제 데이터를 불러오지 못했습니다.");
+        return;
+      }
+
       questions = data;
       selected = shuffleArray(questions).slice(0,5);
+
+      if(selected.length === 0){
+        alert("출제할 문제가 없습니다.");
+        return;
+      }
+
       current = 0;
       score = 0;
+
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("quizScreen").classList.remove("hidden");
+
       showQuestion();
+    })
+    .catch(err => {
+      alert("데이터 로딩 오류가 발생했습니다.");
+      console.error(err);
     });
 }
 
 function showQuestion() {
+
+  if(!selected[current]) return;
+
   const q = selected[current];
+
   document.getElementById("question").innerText =
-    `Q${current+1}. ${q.problem}`;
+    `Q${current+1}. ${q.problem || "문제 없음"}`;
+
   document.getElementById("feedback").innerText = "";
 }
 
 function checkAnswer(choice) {
-  const correct = selected[current].answer
-    .toString()
-    .trim()
-    .toUpperCase();
+
+  if(!selected[current]) return;
+
+  const correct = String(selected[current].answer || "")
+                    .trim()
+                    .toUpperCase();
 
   if(choice.toUpperCase() === correct) {
     score++;
@@ -129,11 +154,13 @@ function checkAnswer(choice) {
 
   setTimeout(() => {
     current++;
+
     if(current < selected.length) {
       showQuestion();
     } else {
       showResult();
     }
+
   }, 1200);
 }
 
