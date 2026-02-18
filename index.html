@@ -113,15 +113,18 @@ function showQuestion() {
 }
 
 function checkAnswer(choice) {
-  const correct = selected[current].answer.trim();
+  const correct = selected[current].answer
+    .toString()
+    .trim()
+    .toUpperCase();
 
-  if(choice === correct) {
+  if(choice.toUpperCase() === correct) {
     score++;
     document.getElementById("feedback").innerText =
-      "정답이에요 ✨ " + selected[current].explanation;
+      "정답이에요 ✨ " + (selected[current].explanation || "");
   } else {
     document.getElementById("feedback").innerText =
-      "아쉬워요 🥲 " + selected[current].explanation;
+      "아쉬워요 🥲 " + (selected[current].explanation || "");
   }
 
   setTimeout(() => {
