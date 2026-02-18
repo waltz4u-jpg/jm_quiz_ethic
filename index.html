@@ -7,23 +7,18 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- 고급 폰트 -->
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<!-- 세련된 현대 폰트 SUIT -->
+<link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
 
 <style>
 body {
-  font-family: 'Pretendard', sans-serif;
-  background: linear-gradient(135deg, #e8f1ef, #dde8f0);
-}
-
-.title-font {
-  font-family: 'Noto Serif KR', serif;
+  font-family: 'SUIT', sans-serif;
+  background: linear-gradient(135deg, #e6f0f2, #dde7ec);
 }
 
 .card {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
 }
 </style>
 </head>
@@ -33,47 +28,45 @@ body {
 <div class="w-full max-w-md p-6">
 
   <!-- 시작 화면 -->
-  <div id="startScreen" class="card rounded-3xl shadow-2xl p-10 text-center transition-all">
+  <div id="startScreen" class="card rounded-3xl shadow-xl p-10 text-center">
 
-    <h1 class="title-font text-3xl font-bold text-slate-700 mb-6">
+    <h1 class="text-3xl font-semibold text-slate-800 mb-6 tracking-tight">
       지민이의 3분 학습
     </h1>
 
-    <p id="greeting" class="mb-8 text-slate-500 text-sm tracking-wide"></p>
+    <p id="greeting" class="text-slate-500 text-sm mb-10"></p>
 
-    <button onclick="startQuiz()"
-      class="px-8 py-3 bg-slate-600 text-white rounded-full hover:bg-slate-700 transition-all shadow-lg">
+    <button id="startBtn"
+      class="px-8 py-3 bg-gradient-to-r from-teal-600 to-cyan-700 text-white rounded-full shadow-lg hover:scale-105 transition-all">
       시작하기
     </button>
 
   </div>
 
   <!-- 문제 화면 -->
-  <div id="quizScreen" class="hidden card rounded-3xl shadow-2xl p-10 text-center">
+  <div id="quizScreen" class="hidden card rounded-3xl shadow-xl p-10 text-center">
 
-    <div class="mb-6 text-sm text-slate-400" id="progressText"></div>
+    <div id="progressText" class="text-xs text-slate-400 mb-4"></div>
 
-    <h2 id="question" class="mb-10 text-lg font-semibold text-slate-700 leading-relaxed"></h2>
+    <h2 id="question" class="text-lg font-medium text-slate-800 mb-10 leading-relaxed"></h2>
 
     <div class="flex justify-center gap-8 mb-6">
-
-      <button onclick="checkAnswer('O')"
-        class="w-24 h-24 bg-teal-100 text-teal-700 rounded-full text-2xl font-bold hover:bg-teal-200 transition shadow">
+      <button id="btnO"
+        class="w-24 h-24 rounded-full bg-teal-100 text-teal-700 text-2xl font-semibold hover:bg-teal-200 transition shadow">
         O
       </button>
 
-      <button onclick="checkAnswer('X')"
-        class="w-24 h-24 bg-slate-200 text-slate-700 rounded-full text-2xl font-bold hover:bg-slate-300 transition shadow">
+      <button id="btnX"
+        class="w-24 h-24 rounded-full bg-slate-200 text-slate-700 text-2xl font-semibold hover:bg-slate-300 transition shadow">
         X
       </button>
-
     </div>
 
-    <div id="feedbackBox" class="hidden mt-4">
-      <p id="feedback" class="text-sm text-slate-700 leading-relaxed mb-4"></p>
+    <div id="feedbackBox" class="hidden mt-6 text-left">
+      <p id="feedback" class="text-sm text-slate-700 mb-6 leading-relaxed"></p>
 
-      <button onclick="nextQuestion()"
-        class="px-6 py-2 bg-slate-600 text-white rounded-full hover:bg-slate-700 transition shadow">
+      <button id="nextBtn"
+        class="px-6 py-2 bg-slate-700 text-white rounded-full hover:bg-slate-800 transition shadow">
         다음 문제
       </button>
     </div>
@@ -81,17 +74,17 @@ body {
   </div>
 
   <!-- 결과 화면 -->
-  <div id="resultScreen" class="hidden card rounded-3xl shadow-2xl p-10 text-center">
+  <div id="resultScreen" class="hidden card rounded-3xl shadow-xl p-10 text-center">
 
-    <h2 class="title-font text-2xl font-bold text-slate-700 mb-6">
-      학습 결과
+    <h2 class="text-2xl font-semibold text-slate-800 mb-6">
+      학습 완료
     </h2>
 
-    <p id="scoreText" class="text-lg text-slate-600 mb-8"></p>
+    <p id="scoreText" class="text-slate-600 text-lg mb-8"></p>
 
-    <button onclick="restartQuiz()"
-      class="px-8 py-3 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition shadow-lg">
-      또 학습하기
+    <button id="restartBtn"
+      class="px-8 py-3 bg-gradient-to-r from-cyan-700 to-teal-600 text-white rounded-full shadow-lg hover:scale-105 transition">
+      다시 시작
     </button>
 
   </div>
@@ -108,33 +101,46 @@ let current = 0;
 let score = 0;
 
 const greetings = [
-  "오늘도 차분하게 집중해볼까요?",
-  "3분이면 충분합니다.",
-  "조용히 실력을 쌓는 시간입니다.",
-  "한 문제씩 천천히 풀어봅시다.",
-  "이렇게 3분씩 반복해도 큰 자산이 돼요"
+  "차분하게 시작해볼까요?",
+  "집중의 3분입니다.",
+  "조용히 실력을 쌓는 시간.",
+  "한 문제씩 단단하게.",
+  "오늘도 성장합니다."
 ];
 
 document.getElementById("greeting").innerText =
   greetings[Math.floor(Math.random() * greetings.length)];
 
-function startQuiz() {
+document.getElementById("startBtn").addEventListener("click", startQuiz);
+document.getElementById("btnO").addEventListener("click", () => checkAnswer("O"));
+document.getElementById("btnX").addEventListener("click", () => checkAnswer("X"));
+document.getElementById("nextBtn").addEventListener("click", nextQuestion);
+document.getElementById("restartBtn").addEventListener("click", restartQuiz);
 
-  document.getElementById("startScreen").classList.add("hidden");
-  document.getElementById("quizScreen").classList.remove("hidden");
+function startQuiz() {
 
   fetch(sheetURL)
     .then(res => res.json())
     .then(data => {
+
       questions = data;
       selected = shuffleArray(questions).slice(0,5);
+
       current = 0;
       score = 0;
+
+      document.getElementById("startScreen").classList.add("hidden");
+      document.getElementById("resultScreen").classList.add("hidden");
+      document.getElementById("quizScreen").classList.remove("hidden");
+
       showQuestion();
     });
 }
 
 function showQuestion() {
+
+  document.getElementById("feedbackBox").classList.add("hidden");
+
   const q = selected[current];
 
   document.getElementById("progressText").innerText =
@@ -142,16 +148,13 @@ function showQuestion() {
 
   document.getElementById("question").innerText =
     q.problem;
-
-  document.getElementById("feedbackBox").classList.add("hidden");
 }
 
 function checkAnswer(choice) {
 
-  const correct = selected[current].answer
-    .toString()
-    .trim()
-    .toUpperCase();
+  const correct = String(selected[current].answer)
+                    .trim()
+                    .toUpperCase();
 
   const feedbackEl = document.getElementById("feedback");
 
@@ -162,7 +165,7 @@ function checkAnswer(choice) {
       (selected[current].explanation || "");
   } else {
     feedbackEl.innerHTML =
-      "<strong class='text-red-600'>아쉽습니다.</strong><br>" +
+      "<strong class='text-red-600'>정답은 " + correct + " 입니다.</strong><br>" +
       (selected[current].explanation || "");
   }
 
@@ -191,12 +194,12 @@ function showResult() {
 
 function restartQuiz() {
 
-  document.getElementById("resultScreen").classList.add("hidden");
-  document.getElementById("quizScreen").classList.remove("hidden");
-
   selected = shuffleArray(questions).slice(0,5);
   current = 0;
   score = 0;
+
+  document.getElementById("resultScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
 
   showQuestion();
 }
